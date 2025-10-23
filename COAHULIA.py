@@ -38,12 +38,12 @@ chrome_options.binary_location = r"C:\\Users\\pro02\\Downloads\\GoogleChromePort
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 # Iniciar el navegador
-driver.get('http://compilacion.ordenjuridico.gob.mx/poderes2.php?edo=17')
+driver.get('http://compilacion.ordenjuridico.gob.mx/poderes2.php?edo=5')
 #driver.get('http://www.ordenjuridico.gob.mx/ambest.php#gsc.tab=0')
 wait = WebDriverWait(driver, 10)  # Aumentamos el tiempo de espera
 
 # download_directory = "C:\\Users\\pro02\\Documents\\azurite\\expedientes"
-download_directory = "C:\\Users\\pro02\\Documents\\azurite\\MORELOS DOF"
+download_directory = "C:\\Users\\pro02\\Documents\\azurite\\COAHUILA DOF"
 os.makedirs(download_directory, exist_ok=True)
 tiempo_espera_descarga = 10
 
@@ -67,15 +67,15 @@ chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 wait = WebDriverWait(driver, 5)
 
+
 # Accesos
 SERVICE_ACCOUNT_FILE = "gcredential.json"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SPREADSHEET_ID = '1PlZX_p7PDcV6Enz26v5ezZHaw-54aKJjabTShKj9zp8'
-SHEET_NAME = 'MORELOS'
+SHEET_NAME = 'COAHUILA'
 
 creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service_sheets = build('sheets', 'v4', credentials=creds)
-
 
 
 # Función para limpiar nombres de archivo
@@ -95,17 +95,12 @@ def descargar_ordenamiento(url, ruta_guardado, nombre_archivo, extension):
     try:
         logging.info(f"Descargando ordenamiento: {nombre_archivo}")
         nombre_archivo = limpiar_nombre_archivo(nombre_archivo)
-        nombre_base = nombre_archivo
         nombre_archivo = f"{nombre_archivo}.{extension}"
         ruta_completa = os.path.join(ruta_guardado, nombre_archivo)
 
-        # Si el archivo ya existe, agregar un número al final
-        contador = 1
-        while os.path.exists(ruta_completa):
-            logging.info(f"El archivo ya existe: {nombre_archivo}. Agregando número al final...")
-            nombre_archivo = f"{nombre_base}_{contador}.{extension}"
-            ruta_completa = os.path.join(ruta_guardado, nombre_archivo)
-            contador += 1
+        if os.path.exists(ruta_completa):
+            logging.warning(f"El archivo ya existe: {nombre_archivo}. Se omite la descarga.")
+            return True
 
         respuesta = requests.get(url)
         if respuesta.status_code == 200:
@@ -119,6 +114,16 @@ def descargar_ordenamiento(url, ruta_guardado, nombre_archivo, extension):
     except Exception as e:
         logging.error(f"Error descargando {nombre_archivo}: {e}")
         return False
+
+# Función para obtener datos de Google Sheets
+def obtener_datos_sheets():
+    try:
+        sheet = service_sheets.spreadsheets()
+        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=f"{SHEET_NAME}!A:E").execute()
+        return result.get('values', [])
+    except HttpError as err:
+        logging.error(f"Error al obtener datos de Google Sheets: {err}")
+        return []
 
 # Función para obtener el siguiente ID en Google Sheets
 def get_next_id(values):
@@ -135,6 +140,14 @@ def get_next_id(values):
 # Función para guardar los datos en Google Sheets
 def guardar_en_google_sheets(nombre = None, fecha = None, publicacion = None, tipo = None, estatus = None):
     try:
+        datos_existentes = obtener_datos_sheets()
+
+        # Verificar si el dato ya existe en Google Sheets
+        for fila in datos_existentes:
+            if len(fila) > 1 and fila[1] == nombre:
+                logging.info(f"El archivo '{nombre}' ya existe en Google Sheets.")
+                return
+            
         # Recuperar los valores existentes de la hoja de cálculo
         sheet = service_sheets.spreadsheets()
         result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=f"{SHEET_NAME}!A:E").execute()
@@ -161,118 +174,82 @@ def guardar_en_google_sheets(nombre = None, fecha = None, publicacion = None, ti
         logging.error(f"Error al almacenar los datos: {err}")
     except Exception as e:
         logging.error(f"Error general al guardar en Google Sheets: {e}")
-      
+        
+
 # Proceso principal
 try:
+    #logging.info("Verificando enlace de Aguascalientes.")
+    #enlace_aguascalientes = wait.until(
+    #EC.element_to_be_clickable((By.XPATH, '//a[@href="./estatal.php?liberado=si&edo=1" and @class="notas_rapidas"]'))
+    #)
+    #enlace_aguascalientes.click()
+    #logging.info("Enlace de Aguascalientes seleccionado exitosamente.")
+
+    # Cambio al iframe
+    #iframe = wait.until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+    #driver.switch_to.frame(iframe)
+    #logging.info("selecc iframe")
+    
     select_element = wait.until(EC.presence_of_element_located((By.NAME, "catTipo")))
     select = Select(select_element)
+    logging.info("selecc catTip")
     select.select_by_visible_text("Todos los ordenamientos")
     driver.switch_to.default_content()
+    
+    # Cambio al iframe de resultados
+    #iframe = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "iframe[src*='compilacion.ordenjuridico.gob.mx']")))
+    #driver.switch_to.frame(iframe)
+    
+    # Procesar filas de la tabla
+    filas = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "tr.txt_gral")))
+    #____________________________________________________desde aqui tendria que ser___________________________________________________________________
+    for fila in filas:
+        logging.info(f"Procesando archivo: {fila}")
+        tipo = fila.find_element(By.XPATH, ".//td[2]").text.strip()
+        estatus = fila.find_element(By.XPATH, ".//td[3]").text.strip()
+        publicacion = fila.find_element(By.XPATH, ".//td[4]").text.strip()#agregado
 
-    # Variable para contar elementos totales procesados
-    elemento_global = 0
-    elemento_inicio = 2805 # Empezar desde el elemento 701 (índice 700)
+        #publicacion = limpiar_nombre_archivo(publicacion)
 
-    # Bucle para procesar múltiples páginas
-    while True:
-        # Esperar a que carguen las filas
-        filas = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "tr.txt_gral")))
+        tipo = limpiar_nombre_archivo(tipo)
+        estatus = limpiar_nombre_archivo(estatus)
 
-        # Recorremos las filas dinámicamente (reobteniendo en cada iteración)
-        for i in range(len(filas)):
-            elemento_global += 1
+        # Crear carpeta para guardar archivos
+        ruta_tipo_estatus = os.path.join(download_directory, tipo, estatus) #publicacion
+        os.makedirs(ruta_tipo_estatus, exist_ok=True)
 
-            # Saltar elementos hasta llegar al elemento 701
-            if elemento_global <= elemento_inicio:
-                logging.info(f"Saltando elemento {elemento_global} de {elemento_inicio}...")
-                continue
+        # Procesar enlace
+        enlace = fila.find_element(By.XPATH, ".//a[contains(@href, 'fichaOrdenamiento2.php')]")
+        nombre_ordenamiento = limpiar_nombre_archivo(enlace.text.strip())
+        enlace.click()
 
+        # Verificar ventana emergente
+        if len(driver.window_handles) > 1:
+            driver.switch_to.window(driver.window_handles[-1])
+        else:
+            continue
+
+        for extension in ["doc", "pdf"]:
             try:
-                # Volver a obtener las filas (para evitar stale references)
-                filas_actuales = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "tr.txt_gral")))
-                fila = filas_actuales[i]
-
-                logging.info(f"Procesando elemento {elemento_global}: {fila}")
-
-                tipo = fila.find_element(By.XPATH, ".//td[2]").text.strip()
-                estatus = fila.find_element(By.XPATH, ".//td[3]").text.strip()
-                publicacion = fila.find_element(By.XPATH, ".//td[4]").text.strip()
-
-                tipo = limpiar_nombre_archivo(tipo)
-                estatus = limpiar_nombre_archivo(estatus)
-
-                # Guardar directamente en la carpeta principal sin subcarpetas
-                ruta_guardado = download_directory
-
-                # Obtener y abrir enlace del ordenamiento
-                enlace = fila.find_element(By.XPATH, ".//a[contains(@href, 'fichaOrdenamiento2.php')]")
-                nombre_ordenamiento = limpiar_nombre_archivo(enlace.text.strip())
-                enlace.click()
-
-                # Cambiar a nueva pestaña
-                wait.until(lambda d: len(d.window_handles) > 1)
-                driver.switch_to.window(driver.window_handles[-1])
-
-                # Esperar que carguen enlaces de descarga (.pdf o .doc)
-                enlaces = wait.until(
-                    EC.presence_of_all_elements_located(
-                        (By.XPATH, "//a[contains(@href, 'obtenerpdf.php') or contains(@href, 'obtenerdoc.php')]")
+                enlace_descarga = wait.until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, f"//a[contains(@href, 'obtenerdoc.php') and contains(@href, '.{extension}')]")
                     )
                 )
+                descargar_ordenamiento(enlace_descarga.get_attribute('href'), ruta_tipo_estatus, nombre_ordenamiento, extension)
+            except Exception:
+                logging.warning(f"No se encontró enlace para {extension} en {nombre_ordenamiento}.")
 
-                if not enlaces:
-                    logging.warning(f"No se encontraron enlaces PDF o DOC en {nombre_ordenamiento}.")
-                else:
-                    for enlace_descarga in enlaces:
-                        href = enlace_descarga.get_attribute("href")
-                        if not href:
-                            continue
+        # Almacenar en Google Sheets
+        fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        guardar_en_google_sheets(nombre_ordenamiento, publicacion, fecha, tipo, estatus)
 
-                        # Detectar extensión
-                        if ".pdf" in href.lower():
-                            extension = "pdf"
-                        elif ".doc" in href.lower():
-                            extension = "doc"
-                        else:
-                            continue
-
-                        logging.info(f"Descargando archivo {extension.upper()}: {href}")
-                        descargar_ordenamiento(href, ruta_guardado, nombre_ordenamiento, extension)
-
-                # Guardar registro en Google Sheets
-                fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                guardar_en_google_sheets(nombre_ordenamiento, publicacion, fecha, tipo, estatus)
-
-            except Exception as e:
-                logging.error(f"Error en iteración {i}: {e}")
-
-            finally:
-                # Cierra pestaña secundaria y regresa al listado
-                if len(driver.window_handles) > 1:
-                    driver.close()
-                    driver.switch_to.window(driver.window_handles[0])
-                time.sleep(1)
-
-        # Después de procesar todas las filas, buscar el botón "siguiente"
-        try:
-            logging.info("Buscando el botón 'siguiente' para continuar con la siguiente página...")
-            boton_siguiente = driver.find_element(By.ID, "forwardbutton")
-
-            # Verificar si el botón está visible
-            style_attr = boton_siguiente.get_attribute("style")
-            if boton_siguiente.is_displayed() and style_attr and "visibility: visible" in style_attr:
-                logging.info("Haciendo clic en el botón 'siguiente' para ir a la próxima página...")
-                boton_siguiente.click()
-                time.sleep(3)  # Esperar a que cargue la siguiente página
-            else:
-                logging.info("El botón 'siguiente' no está visible. Fin de la paginación.")
-                break
-        except Exception as e:
-            logging.info(f"No se encontró el botón 'siguiente' o se llegó a la última página. Error: {e}")
-            break
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+        #driver.switch_to.frame(iframe)
 
 except Exception as e:
     logging.error(f"Error general: {e}")
+
 finally:
     driver.quit()
-    

@@ -37,63 +37,44 @@ chrome_options.binary_location = r"C:\\Users\\pro02\\Downloads\\GoogleChromePort
 # Iniciar el navegador
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
-# Iniciar el navegador
-driver.get('http://compilacion.ordenjuridico.gob.mx/poderes2.php?edo=18')
+driver.get('http://compilacion.ordenjuridico.gob.mx/poderes2.php?edo=19')
 #driver.get('http://www.ordenjuridico.gob.mx/ambest.php#gsc.tab=0')
+
 wait = WebDriverWait(driver, 10)  # Aumentamos el tiempo de espera
-
-# download_directory = "C:\\Users\\pro02\\Documents\\azurite\\expedientes"
-download_directory = "C:\\Users\\pro02\\Documents\\azurite\\NAYARIT DOF"
-os.makedirs(download_directory, exist_ok=True)
-tiempo_espera_descarga = 10
-
-prefs = {
-    "download.default_directory": download_directory,
-    "download.prompt_for_download": False,
-    "download.directory_upgrade": True,
-    "plugins.always_open_pdf_externally": True  # Para que los PDF se descarguen directamente
-}
-chrome_options.add_experimental_option("prefs", prefs)
-chrome_options.add_argument('--ignore-certificate-errors')
-chrome_options.add_argument('--log-level=3')  # Opcional: menos logs
-chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-
-# chrome_options.add_argument("--headless")  # ⚠️ Evita usar esto si necesitas descargar archivos
-
-# options.add_experimental_option("prefs", prefs)
-# driver = webdriver.Chrome(options=options)
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 wait = WebDriverWait(driver, 5)
 
+# Ruta base para guardar archivos
+ruta_base_guardado = "C:\\Users\\pro02\\Documents\\azurite\\NUEVO LEON DOF"
+os.makedirs(ruta_base_guardado, exist_ok=True)
 
-# Accesos
+# Google Sheets credentials
 SERVICE_ACCOUNT_FILE = "gcredential.json"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SPREADSHEET_ID = '1PlZX_p7PDcV6Enz26v5ezZHaw-54aKJjabTShKj9zp8'
-SHEET_NAME = 'NAYARIT'
+SPREADSHEET_ID = '1PlZX_p7PDcV6Enz26v5ezZHaw-54aKJjabTShKj9zp8'  # Asegúrate de que este ID sea correcto
+SHEET_NAME = 'NEW LEON'
 
+if not all([SERVICE_ACCOUNT_FILE, SPREADSHEET_ID]):
+    logging.error("Faltan variables de entorno requeridas. Verifica la configuración.")
+    exit(1)
+
+# Credenciales para Google Sheets
 creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service_sheets = build('sheets', 'v4', credentials=creds)
 
-
 # Función para limpiar nombres de archivo
 def limpiar_nombre_archivo(nombre_original, max_length=100):
-    try:
-        """Limpia caracteres no válidos y trunca nombres largos."""
-        logging.info(f"limpiando archivo: {nombre_original}")
-        nombre_limpio = re.sub(r'[<>:"/\\|?*]', '', nombre_original)
-        logging.info("Limpieza de archivo hecha de forma correcta")
-        return nombre_limpio[:max_length]
-    except Exception as e:
-        logging.error(f"Hubo un problema al hacer la limpieza del archivo: {nombre_original}, error: {e}")
+    """Limpia caracteres no válidos y trunca nombres largos."""
+    nombre_limpio = re.sub(r'[<>:"/\\|?*]', '', nombre_original)
+    return nombre_limpio[:max_length]
 
-# Función para descargar archivos
-def descargar_ordenamiento(url, ruta_guardado, nombre_archivo, extension):
+# Función para descargar el archivo
+async def descargar_ordenamiento(url, ruta_guardado, nombre_archivo, extension):
     """Descarga un archivo desde un enlace y lo guarda localmente."""
     try:
-        logging.info(f"Descargando ordenamiento: {nombre_archivo}")
         nombre_archivo = limpiar_nombre_archivo(nombre_archivo)
         nombre_archivo = f"{nombre_archivo}.{extension}"
         ruta_completa = os.path.join(ruta_guardado, nombre_archivo)
@@ -101,7 +82,7 @@ def descargar_ordenamiento(url, ruta_guardado, nombre_archivo, extension):
         if os.path.exists(ruta_completa):
             logging.warning(f"El archivo ya existe: {nombre_archivo}. Se omite la descarga.")
             return True
-
+        
         respuesta = requests.get(url)
         if respuesta.status_code == 200:
             with open(ruta_completa, 'wb') as archivo:
@@ -138,7 +119,7 @@ def get_next_id(values):
     return last_id + 1
 
 # Función para guardar los datos en Google Sheets
-def guardar_en_google_sheets(nombre = None, fecha = None, publicacion = None, tipo = None, estatus = None):
+def guardar_en_google_sheets(nombre, fecha, tipo, estatus):
     try:
         datos_existentes = obtener_datos_sheets()
 
@@ -150,14 +131,14 @@ def guardar_en_google_sheets(nombre = None, fecha = None, publicacion = None, ti
             
         # Recuperar los valores existentes de la hoja de cálculo
         sheet = service_sheets.spreadsheets()
-        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=f"{SHEET_NAME}!A:E").execute()
+        result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=f"{SHEET_NAME}!A:D").execute()
         values = result.get('values', [])
         
         # Obtenemos el próximo ID basado en la última fila
         next_id = get_next_id(values)
 
         # Crear nueva fila con los datos: nombre, fecha, tipo, estatus
-        nueva_fila = [next_id, nombre, tipo, estatus, fecha, publicacion]    #estatus es la fecha del archivo y fecha la fecha de descarga
+        nueva_fila = [next_id, nombre, fecha, tipo, estatus]
         cuerpo = {
             'values': [nueva_fila]
         }
@@ -174,48 +155,39 @@ def guardar_en_google_sheets(nombre = None, fecha = None, publicacion = None, ti
         logging.error(f"Error al almacenar los datos: {err}")
     except Exception as e:
         logging.error(f"Error general al guardar en Google Sheets: {e}")
-        
 
-# Proceso principal
+#prceso principal
 try:
-    #logging.info("Verificando enlace de Aguascalientes.")
+    # Selección del enlace
     #enlace_aguascalientes = wait.until(
-    #EC.element_to_be_clickable((By.XPATH, '//a[@href="./estatal.php?liberado=si&edo=1" and @class="notas_rapidas"]'))
+    #    EC.element_to_be_clickable((By.XPATH, '//a[@href="./estatal.php?liberado=si&edo=19" and @class="notas_rapidas"]'))
     #)
     #enlace_aguascalientes.click()
-    #logging.info("Enlace de Aguascalientes seleccionado exitosamente.")
+    #logging.info("Enlace de Jalisco seleccionado exitosamente.")
 
     # Cambio al iframe
     #iframe = wait.until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
     #driver.switch_to.frame(iframe)
-    #logging.info("selecc iframe")
-    
+
     select_element = wait.until(EC.presence_of_element_located((By.NAME, "catTipo")))
     select = Select(select_element)
-    logging.info("selecc catTip")
     select.select_by_visible_text("Todos los ordenamientos")
     driver.switch_to.default_content()
-    
+
     # Cambio al iframe de resultados
     #iframe = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "iframe[src*='compilacion.ordenjuridico.gob.mx']")))
     #driver.switch_to.frame(iframe)
-    
+
     # Procesar filas de la tabla
     filas = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "tr.txt_gral")))
-    #____________________________________________________desde aqui tendria que ser___________________________________________________________________
     for fila in filas:
-        logging.info(f"Procesando archivo: {fila}")
         tipo = fila.find_element(By.XPATH, ".//td[2]").text.strip()
         estatus = fila.find_element(By.XPATH, ".//td[3]").text.strip()
-        publicacion = fila.find_element(By.XPATH, ".//td[4]").text.strip()#agregado
-
-        #publicacion = limpiar_nombre_archivo(publicacion)
-
         tipo = limpiar_nombre_archivo(tipo)
         estatus = limpiar_nombre_archivo(estatus)
 
-        # Crear carpeta para guardar archivos
-        ruta_tipo_estatus = os.path.join(download_directory, tipo, estatus) #publicacion
+        # Crear carpeta
+        ruta_tipo_estatus = os.path.join(ruta_base_guardado, tipo, estatus)
         os.makedirs(ruta_tipo_estatus, exist_ok=True)
 
         # Procesar enlace
@@ -233,16 +205,16 @@ try:
             try:
                 enlace_descarga = wait.until(
                     EC.presence_of_element_located(
-                        (By.XPATH, f"//a[contains(@href, 'obtenerdoc.php') and contains(@href, '.{extension}')]")
+                        (By.XPATH, f"//a[contains(@href, 'obtenerdoc.php') and contains(@href, '.{extension}')]") #no hace bien las descargas
                     )
                 )
                 descargar_ordenamiento(enlace_descarga.get_attribute('href'), ruta_tipo_estatus, nombre_ordenamiento, extension)
             except Exception:
                 logging.warning(f"No se encontró enlace para {extension} en {nombre_ordenamiento}.")
 
-        # Almacenar en Google Sheets
+# Almacenar en Google Sheets
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        guardar_en_google_sheets(nombre_ordenamiento, publicacion, fecha, tipo, estatus)
+        guardar_en_google_sheets(nombre_ordenamiento, fecha, tipo, estatus)
 
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
@@ -250,6 +222,5 @@ try:
 
 except Exception as e:
     logging.error(f"Error general: {e}")
-
 finally:
     driver.quit()
