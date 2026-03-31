@@ -1,0 +1,368 @@
+{
+  "fecha": "2026-03-31T13:55:23.696033",
+  "total_analizados": 557,
+  "total_relevantes": 22,
+  "documentos": [
+    {
+      "archivo": "CÓDIGO Civil Federal.json",
+      "seccion": "Federal",
+      "titulo": "CÓDIGO Civil Federal",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "civil"
+      ],
+      "fecha": "1928-08-31",
+      "vigente": true,
+      "razones": [
+        "Código Civil"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "CÓDIGO Federal de Procedimientos Civiles.json",
+      "seccion": "Federal",
+      "titulo": "CÓDIGO Federal de Procedimientos Civiles",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "civil"
+      ],
+      "fecha": "1943-02-24",
+      "vigente": false,
+      "razones": [
+        "Código Civil",
+        "Procedimientos Civiles"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "CÓDIGO Nacional de Procedimientos Civiles y Familiares.json",
+      "seccion": "Federal",
+      "titulo": "CÓDIGO Nacional de Procedimientos Civiles y Familiares",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "civil"
+      ],
+      "fecha": "2023-06-07",
+      "vigente": true,
+      "razones": [
+        "Código Civil",
+        "Procedimientos Civiles",
+        "Código Familiar"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "CÓDIGO de Comercio.json",
+      "seccion": "Federal",
+      "titulo": "CÓDIGO de Comercio",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "económico"
+      ],
+      "fecha": "1889-12-13",
+      "vigente": true,
+      "razones": [
+        "Código de Comercio"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY General de Organizaciones y Actividades Auxiliares del Crédito.json",
+      "seccion": "Federal",
+      "titulo": "LEY General de Organizaciones y Actividades Auxiliares del Crédito",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "fiscal"
+      ],
+      "fecha": "1985-01-14",
+      "vigente": true,
+      "razones": [
+        "Crédito"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY General de Títulos y Operaciones de Crédito.json",
+      "seccion": "Federal",
+      "titulo": "LEY General de Títulos y Operaciones de Crédito",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "fiscal"
+      ],
+      "fecha": "1932-08-27",
+      "vigente": true,
+      "razones": [
+        "Crédito",
+        "Títulos y Operaciones de Crédito"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY Reglamentaria de la Fracción V del Artículo 76 de la Constitución General de la República.json",
+      "seccion": "Federal",
+      "titulo": "LEY Reglamentaria de la Fracción V del Artículo 76 de la Constitución General de la República",
+      "tipo_ordenamiento": "Constitución",
+      "materia": [
+        "constitucional"
+      ],
+      "fecha": "1978-12-29",
+      "vigente": true,
+      "razones": [
+        "Constitución Estatal"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY de Ahorro y Crédito Popular.json",
+      "seccion": "Federal",
+      "titulo": "LEY de Ahorro y Crédito Popular",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "fiscal"
+      ],
+      "fecha": "2001-06-04",
+      "vigente": true,
+      "razones": [
+        "Crédito"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY de Instituciones de Crédito.json",
+      "seccion": "Federal",
+      "titulo": "LEY de Instituciones de Crédito",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "fiscal"
+      ],
+      "fecha": "1990-07-18",
+      "vigente": true,
+      "razones": [
+        "Crédito"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY de Transparencia y de Fomento a la Competencia en el Crédito Garantizado.json",
+      "seccion": "Federal",
+      "titulo": "LEY de Transparencia y de Fomento a la Competencia en el Crédito Garantizado",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "fiscal",
+        "transparencia",
+        "económico"
+      ],
+      "fecha": "2002-12-30",
+      "vigente": true,
+      "razones": [
+        "Crédito"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY de Uniones de Crédito.json",
+      "seccion": "Federal",
+      "titulo": "LEY de Uniones de Crédito",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "fiscal"
+      ],
+      "fecha": "2008-08-20",
+      "vigente": true,
+      "razones": [
+        "Crédito"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY de Vivienda.json",
+      "seccion": "Federal",
+      "titulo": "LEY de Vivienda",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "desarrollo social"
+      ],
+      "fecha": "2006-06-27",
+      "vigente": true,
+      "razones": [
+        "Vivienda"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "LEY del Instituto del Fondo Nacional de la Vivienda para los Trabajadores.json",
+      "seccion": "Federal",
+      "titulo": "LEY del Instituto del Fondo Nacional de la Vivienda para los Trabajadores",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "laboral",
+        "desarrollo social"
+      ],
+      "fecha": "1972-04-24",
+      "vigente": true,
+      "razones": [
+        "Vivienda"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Constitución Política del Estado Libre y Soberano de Oaxaca.json",
+      "seccion": "Estatal",
+      "titulo": "Constitución Política del Estado Libre y Soberano de Oaxaca",
+      "tipo_ordenamiento": "Constitución",
+      "materia": [
+        "constitucional"
+      ],
+      "fecha": "2015-06-30",
+      "vigente": true,
+      "razones": [
+        "Constitución Estatal"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Código Civil para el Estado de Oaxaca.json",
+      "seccion": "Estatal",
+      "titulo": "Código Civil para el Estado de Oaxaca",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "civil"
+      ],
+      "fecha": "1944-11-25",
+      "vigente": true,
+      "razones": [
+        "Código Civil"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Código Familiar para el Estado de Oaxaca.json",
+      "seccion": "Estatal",
+      "titulo": "Código Familiar para el Estado de Oaxaca",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "civil"
+      ],
+      "fecha": "2025-12-13",
+      "vigente": true,
+      "razones": [
+        "Código Familiar"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Código de Procedimientos Civiles para el Estado de Oaxaca.json",
+      "seccion": "Estatal",
+      "titulo": "Código de Procedimientos Civiles para el Estado de Oaxaca",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "civil"
+      ],
+      "fecha": "1944-11-30",
+      "vigente": true,
+      "razones": [
+        "Código Civil",
+        "Procedimientos Civiles"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Ley Reglamentaria del Apartado B del Artículo 106 de la Constitución Política del Estado Libre y Soberano de Oaxaca.json",
+      "seccion": "Estatal",
+      "titulo": "Ley Reglamentaria del Apartado B del Artículo 106 de la Constitución Política del Estado Libre y Soberano de Oaxaca",
+      "tipo_ordenamiento": "Constitución",
+      "materia": [
+        "constitucional"
+      ],
+      "fecha": "2021-10-16",
+      "vigente": true,
+      "razones": [
+        "Constitución Estatal"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Ley de Vivienda para el Estado de Oaxaca.json",
+      "seccion": "Estatal",
+      "titulo": "Ley de Vivienda para el Estado de Oaxaca",
+      "tipo_ordenamiento": "Ley",
+      "materia": [
+        "desarrollo social"
+      ],
+      "fecha": "2009-03-28",
+      "vigente": true,
+      "razones": [
+        "Vivienda"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Constitución Política del Estado Libre y Soberano de Oaxaca.json",
+      "seccion": "Municipal",
+      "titulo": "Constitución Política del Estado Libre y Soberano de Oaxaca",
+      "tipo_ordenamiento": "Constitución",
+      "materia": [
+        "constitucional"
+      ],
+      "fecha": "2015-06-30",
+      "vigente": true,
+      "razones": [
+        "Constitución Estatal"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Constitución Política del Estado Libre y Soberano de Oaxaca.json",
+      "seccion": "Marco Normativo",
+      "titulo": "Constitución Política del Estado Libre y Soberano de Oaxaca",
+      "tipo_ordenamiento": "Constitución",
+      "materia": [
+        "constitucional"
+      ],
+      "fecha": "2015-06-30",
+      "vigente": true,
+      "razones": [
+        "Constitución Estatal"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    },
+    {
+      "archivo": "Código de Procedimientos Civiles para el Estado de Oaxaca.json",
+      "seccion": "Marco Normativo",
+      "titulo": "Código de Procedimientos Civiles para el Estado de Oaxaca",
+      "tipo_ordenamiento": "Código",
+      "materia": [
+        "civil"
+      ],
+      "fecha": "1944-11-30",
+      "vigente": true,
+      "razones": [
+        "Código Civil",
+        "Procedimientos Civiles"
+      ],
+      "tiene_12": true,
+      "calidad": "Bueno"
+    }
+  ]
+}
