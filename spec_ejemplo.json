@@ -1,0 +1,14 @@
+{
+  "titulo": "Código Civil Federal",
+  "tipo_ordenamiento": "Código",
+  "jurisdiccion": "Federal",
+  "materia": ["civil"],
+  "fecha_publicacion": "1928-05-26",
+  "es_vigente": true,
+  "status_texto": "Vigente",
+  "contenido": "CÓDIGO CIVIL FEDERAL\nCÁMARA DE DIPUTADOS DEL H. CONGRESO DE LA UNIÓN\nÚltima Reforma DOF 14-11-2025...",
+  "url_fuente": "https://www.diputados.gob.mx/LeyesBiblio/pdf/CCF.pdf",
+  "es_escaneado": false,
+  "calidad_ocr": null,
+  "archivo_origen": "Codigo_Civil_Federal.pdf"
+}
